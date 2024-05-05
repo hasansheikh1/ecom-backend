@@ -64,5 +64,44 @@ const getUser = asyncHandler(async (req, res) => {
     }
     console.log(id)
 })
+const deleteUser = asyncHandler(async (req, res) => {
 
-module.exports = { createUser, loginUserCtrl, getAllUsers, getUser };
+    const { id } = req.params;
+    try {
+        const getUser = await User.findByIdAndDelete(id)
+        res.json({
+            success: true,
+            getUser,
+        })
+    }
+    catch (error) {
+        console.log("Error", error)
+    }
+    console.log(id)
+})
+
+const updateUser =  asyncHandler(async(req,res)=>{
+
+    const {id} = req.params;
+    try{
+        const updateUser =  await User.findByIdAndUpdate(id,{
+            firstname:req.body.firstname,
+            lastname:req.body.lastname,
+            email:req.body.email,
+            mobile:req.body.mobile,
+
+
+        },
+        {new:true}
+        
+    ).select("-password")
+
+    res.json(updateUser)
+    }
+    catch(error){
+        throw new Error("Update user Error",error)
+    }
+
+})
+
+module.exports = { createUser, loginUserCtrl, getAllUsers, getUser,deleteUser,updateUser };
