@@ -80,28 +80,69 @@ const deleteUser = asyncHandler(async (req, res) => {
     console.log(id)
 })
 
-const updateUser =  asyncHandler(async(req,res)=>{
-
-    const {id} = req.params;
-    try{
-        const updateUser =  await User.findByIdAndUpdate(id,{
-            firstname:req.body.firstname,
-            lastname:req.body.lastname,
-            email:req.body.email,
-            mobile:req.body.mobile,
-
+const updateUser = asyncHandler(async (req, res) => {
+    console.log("req user", req.user)
+    const { _id } = req.user;
+    try {
+        const updateUser = await User.findByIdAndUpdate(_id, {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            mobile: req.body.mobile,
 
         },
-        {new:true}
-        
-    ).select("-password")
+            { new: true }
 
-    res.json(updateUser)
+        ).select("-password")
+
+        res.json(updateUser)
     }
-    catch(error){
-        throw new Error("Update user Error",error)
+    catch (error) {
+        throw new Error("Update user Error", error)
+    }
+
+});
+
+
+const blockUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const block = await User.findByIdAndUpdate(id,
+            {
+                isBlocked: true
+            },
+            {
+                new: true
+            }
+        )
+        res.json({
+            message: "User blocked"
+        })
+    }
+    catch (error) {
+        throw new Error(error)
+    }
+})
+const unBlockUser = asyncHandler(async (req, res) => {
+
+    const { id } = req.params;
+    try {
+        const unBlock = await User.findByIdAndUpdate(id,
+            {
+                isBlocked: false
+            },
+            {
+                new: true
+            }
+        )
+        res.json({
+            message: "User Unblocked"
+        })
+    }
+    catch (error) {
+        throw new Error(error)
     }
 
 })
 
-module.exports = { createUser, loginUserCtrl, getAllUsers, getUser,deleteUser,updateUser };
+module.exports = { createUser, blockUser, unBlockUser, loginUserCtrl, getAllUsers, getUser, deleteUser, updateUser };
