@@ -162,7 +162,7 @@ const updateUser = asyncHandler(async (req, res) => {
             lastname: req.body.lastname,
             email: req.body.email,
             mobile: req.body.mobile,
-
+            
         },
             { new: true }
 

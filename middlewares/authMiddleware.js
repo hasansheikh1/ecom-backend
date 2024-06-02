@@ -13,6 +13,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
                 const decode = jwt.verify(token, process.env.JWT_SECRET)
                 console.log("decoded", decode)
                 const user = await User.findById(decode?.id)
+                // console.log("user",user);
                 req.user = user;
                 next();
             }
@@ -30,7 +31,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
 
 const isAdmin = asyncHandler(async (req, res, next) => {
 
-    console.log("request user", req.user)
+    // console.log("request user", req.user)
     const { email } = req.user;
     const adminUser = await User.findOne({ email });
     if (adminUser.role != 'admin') {
