@@ -68,6 +68,7 @@ const getaProduct = asyncHandler(async (req, res) => {
 const getAllProducts = asyncHandler(async (req, res) => {
     // console.log("req query",req.query)
     try {
+
         const queryObj = { ...req.query };
         console.log("query Obj ", queryObj)
         const excludeFields = ['page', 'sort', 'limit', 'fields']
@@ -78,12 +79,22 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
         const query = Product.find(JSON.parse(queryStr))
         // console.log("cc", JSON.parse(queryStr));
-        const product = await query;
-        res.json(product);
+
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(",").join(" ")
+            query = query.sort(sortBy)
+        } 2
+        else {
+    query = query.sort('-createdAt')
+}
+
+
+const product = await query;
+res.json(product);
 
     } catch (error) {
-        throw new Error(error)
-    }
+    throw new Error(error)
+}
 
 })
 
