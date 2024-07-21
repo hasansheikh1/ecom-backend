@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'); // Erase if already required
 const bcrypt = require('bcrypt')
+const crypto = require("crypto");
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema({
     firstname: {
@@ -76,7 +77,7 @@ userSchema.methods.isPasswordMatched = async function (enteredPassword) {
 
 userSchema.methods.createPasswordResetToken = async function(){
     const resetToken = crypto.randomBytes(32).toString("hex");
-    this.passwordResetToken = crypto.createHash('sha256'.update(resetToken)).digest("hex");
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest("hex");
     console.log('check reset pass')
     this.passwordResetExpires = Date.now()+30*60*1000 //10 mins
     return resetToken
