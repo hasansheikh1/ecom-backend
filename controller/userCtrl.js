@@ -219,6 +219,23 @@ const unBlockUser = asyncHandler(async (req, res) => {
 
 })
 
+const updatePassword = asyncHandler(async(req,res)=>{
+    const {_id} = req.user;
+    const {password} = req.body;
+    validateMongoDbId(_id);
+
+    const user = await User.findById(_id);
+    if(password){
+        user.password = password
+        const updatedPassword = await user.save();
+        res.json(updatedPassword);
+    }
+    else{
+        res.json(user);
+    }
+
+})
+
 module.exports = {
     createUser,
     blockUser,
@@ -229,5 +246,6 @@ module.exports = {
     deleteUser,
     updateUser,
     handleRefreshToken,
-    logout
+    logout,
+    updatePassword,
 };
