@@ -1,17 +1,13 @@
-const mongoose = require('mongoose'); // Erase if already required
+const mongoose = require('mongoose');
 
-// Declare the Schema of the Mongo model
 blogSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-
-
     },
     description: {
         type: String,
         // required: true,
-
     },
     category: {
         type: String,
@@ -46,8 +42,6 @@ blogSchema = new mongoose.Schema({
         type: String,
         deafult: "admin"
     },
-
-
 },
     {
         toJSON: {
@@ -61,4 +55,4 @@ blogSchema = new mongoose.Schema({
 );
 
 //Export the model
-module.exports = mongoose.model('Blog', userSchema);
+module.exports = mongoose.model('Blog', blogSchema);
