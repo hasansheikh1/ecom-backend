@@ -22,7 +22,7 @@ blogSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isDiliked: {
+    isDisliked: {
         type: Boolean,
         default: false
     },
