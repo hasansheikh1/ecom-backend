@@ -95,14 +95,17 @@ const deleteBlog = asyncHandler(async (req, res) => {
 const likeBlog = asyncHandler(async (req, res) => {
 
     const { blogId } = req.body;
+    console.log("Req ", req.body);
+
     validateMongoDbId(blogId);
     const blog = await Blog.findById(blogId)
     const loginUserId = req?.user?._id;
 
     const isLiked = blog?.isLiked
     const alreadyDisliked = blog?.dislikes.find(
-        (userId = userId?.toString() === loginUserId?.toString()));
+        (userId) => userId?.toString() === loginUserId?.toString());
 
+    console.log("check dislike", alreadyDisliked)
     if (alreadyDisliked) {
         const blog = await Blog.findByIdAndUpdate(blogId, {
             $pull: { dislikes: loginUserId },
@@ -142,8 +145,38 @@ const likeBlog = asyncHandler(async (req, res) => {
 
 })
 
+const dislikeBlog = asyncHandler(async (req, res) => {
+
+    const { blogId } = req.body;
+
+    validateMongoDbId(blogId);
+    // const blog = await Blog.findById(blogId).
+    //     populate('likes', 'firstname email').exec();
+    const blog = await Blog.findById(blogId)
+    console.log("check", blog)
+    const loginUserId = req?.user?._id;
+
+    const isDisliked = blog?.isDisliked;
+
+    const alreadyLiked = await blog?.likes.find(
+        (userId) => userId?.toString() === loginUserId?.toString());
+    console.log("likes", alreadyLiked)
+
+    if (alreadyLiked) {
+        const blog = await Blog.findByIdAndUpdate(blogId, {
+            $pull: { likes: loginUserId }
+        })
+
+        console.log("dislike", blog)
+    }
+
+
+
+})
+
 module.exports = {
     createBlog,
     updateBlog, getBlog, getAllBlogs, deleteBlog,
-    likeBlog
+    likeBlog,
+    dislikeBlog
 };
