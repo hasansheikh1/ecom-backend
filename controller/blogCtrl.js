@@ -102,6 +102,7 @@ const likeBlog = asyncHandler(async (req, res) => {
     const loginUserId = req?.user?._id;
 
     const isLiked = blog?.isLiked
+    console.log("like check", isLiked)
     const alreadyDisliked = blog?.dislikes.find(
         (userId) => userId?.toString() === loginUserId?.toString());
 
@@ -153,24 +154,42 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     // const blog = await Blog.findById(blogId).
     //     populate('likes', 'firstname email').exec();
     const blog = await Blog.findById(blogId)
-    console.log("check", blog)
+    // console.log("check", blog)
     const loginUserId = req?.user?._id;
 
     const isDisliked = blog?.isDisliked;
 
     const alreadyLiked = await blog?.likes.find(
         (userId) => userId?.toString() === loginUserId?.toString());
-    console.log("likes", alreadyLiked)
+    // console.log("likes", alreadyLiked)
 
     if (alreadyLiked) {
-        const blog = await Blog.findByIdAndUpdate(blogId, {
+        await Blog.findByIdAndUpdate(blogId, {
             $pull: { likes: loginUserId }
         })
 
-        console.log("dislike", blog)
+        // console.log("dislike", blog)
     }
 
+    let blogg;
 
+    if (!isDisliked) {
+        blogg = await Blog.findByIdAndUpdate(blogId, {
+            $push: { dislikes: loginUserId },
+            isDisliked: true
+        }, { new: true }
+        )
+
+    }
+    else {
+        blogg = await Blog.findByIdAndUpdate(blogId, {
+            $pull: { dislikes: loginUserId },
+            isDisliked: false
+        }, { new: true }
+        )
+    }
+
+    res.json(blogg)
 
 })
 
