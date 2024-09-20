@@ -42,7 +42,7 @@ const getBlog = asyncHandler(async (req, res) => {
     validateMongoDbId(id)
     try {
 
-        const getBlog = await Blog.findById(id)
+        const getBlog = await Blog.findById(id).populate("likes").populate("dislikes")
         await Blog.findByIdAndUpdate(id, {
             $inc: { numViews: 1 },
 
@@ -162,7 +162,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     const alreadyLiked = await blog?.likes.find(
         (userId) => userId?.toString() === loginUserId?.toString());
     // console.log("likes", alreadyLiked)
-
+    11111
     if (alreadyLiked) {
         await Blog.findByIdAndUpdate(blogId, {
             $pull: { likes: loginUserId }
@@ -195,7 +195,10 @@ const dislikeBlog = asyncHandler(async (req, res) => {
 
 module.exports = {
     createBlog,
-    updateBlog, getBlog, getAllBlogs, deleteBlog,
+    updateBlog,
+    getBlog,
+    getAllBlogs,
+    deleteBlog,
     likeBlog,
     dislikeBlog
 };
