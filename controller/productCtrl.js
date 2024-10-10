@@ -154,6 +154,24 @@ const addWishlist = asyncHandler(async (req, res) => {
 
 const rating = asyncHandler(async (req, res) => {
 
+    const { id } = req.user;
+    const { star, prodId } = req.body
+    console.log("userId", id)
+    try {
+
+        const product = await Product.findById(prodId);
+        let alreadyRated = product.ratings.find((user) => user.postedby.toString() == id.toString())
+        // console.log("ss", alreadyRated)
+        if (alreadyRated) {
+            const update_rating = await Product.updateOne({
+                ratings: { $elemMatch: alreadyRated }
+            })
+        }
+
+    }
+    catch (error) {
+        throw new Error(error)
+    }
 
 
 
