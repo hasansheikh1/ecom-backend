@@ -163,9 +163,27 @@ const rating = asyncHandler(async (req, res) => {
         let alreadyRated = product.ratings.find((user) => user.postedby.toString() == id.toString())
         // console.log("ss", alreadyRated)
         if (alreadyRated) {
-            const update_rating = await Product.updateOne({
-                ratings: { $elemMatch: alreadyRated }
-            })
+            const update_rating = await Product.updateOne(
+                {
+                    ratings: { $elemMatch: alreadyRated },
+                },
+                {
+                    $set: { "ratings.$.star": star }
+                }
+            );
+        }
+        else {
+            const rateProduct = await Product.findByIdAndUpdate(
+                prodId,
+                {
+                    $push: {
+                        ratings: {
+                            star: star,
+                            postedby: id,
+                        }
+                    }
+                }
+            )
         }
 
     }
