@@ -162,6 +162,8 @@ const rating = asyncHandler(async (req, res) => {
         const product = await Product.findById(prodId);
         let alreadyRated = product.ratings.find((user) => user.postedby.toString() == id.toString())
         // console.log("ss", alreadyRated)
+
+        
         if (alreadyRated) {
             const update_rating = await Product.updateOne(
                 {
@@ -169,8 +171,10 @@ const rating = asyncHandler(async (req, res) => {
                 },
                 {
                     $set: { "ratings.$.star": star }
-                }
+                },
+                {new:true}
             );
+            res.json(update_rating)
         }
         else {
             const rateProduct = await Product.findByIdAndUpdate(
@@ -182,9 +186,17 @@ const rating = asyncHandler(async (req, res) => {
                             postedby: id,
                         }
                     }
-                }
+                },{new:true}
             )
+            res.json(rateProduct)
         }
+
+        const getAllRatings = await Product.findById(prodId);
+        let totalRating = getAllRatings.ratings.length;
+        let sumRating= getAllRatings.ratings.map((item)=>item?.star).reduce((prev,curr)=>prev_curr,0);
+        let actualRating = sumRating/totalRating;
+        
+        console.log("check",actualRating)
 
     }
     catch (error) {
@@ -195,11 +207,45 @@ const rating = asyncHandler(async (req, res) => {
 
 })
 
+const productsRatedByUser=asyncHandler(async(req,res)=>{
+
+    const { id } = req.user;
+    const { star, prodId } = req.body
+    console.log("userId", id)
+    try {
+
+        // const product = await Product.findById(prodId);
+        // let alreadyRated = product.ratings.find((user) => user.postedby.toString() == id.toString())
+        // console.log("ss", alreadyRated)
+
+        const listCheck = await Product.find({
+            ratings:{$elemMatch:{postedby:id}}
+        })
+
+        // console.log("user rated list",listCheck)
+        res.json(listCheck)
+      
+
+    }
+    catch (error) {
+        throw new Error(error)
+    }
+
+
+
+})
+
+
+const getAllRatings = asyncHandler(async(req,res)=>{
+
+})
+
 module.exports = {
     createProduct,
     updateProduct, deleteProduct,
     getaProduct, getAllProducts,
     addWishlist,
-    rating
+    rating,
+    productsRatedByUser
 
 }
